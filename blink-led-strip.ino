@@ -13,7 +13,7 @@ int buttonRightState = 0;
 bool isLeftBlinking = false;
 bool isRightBlinking = false;
 
-unsigned long nextLedOnMillis = 0;
+unsigned long prevLedOnMillis = 0;
 int nextLedOnIndex = 0;
 const long intervalTurnOnNextLed = 250;
 
@@ -63,38 +63,6 @@ void setup() {
 
 // LOOP ************************************************************
 
-void loop() {
-
-  buttonLeftState = digitalRead(BUTTON_LEFT_PIN);
-
-  if (buttonLeftState == HIGH) {
-    if (isLeftBlinking == true){
-      isLeftBlinking = false;
-    } else {
-      isLeftBlinking = true;
-    }
-    
-  }
-
-  if (isLeftBlinking == true){
-    
-    for (int i = 0; i < NUM_LEDS; i++) {
-      // turn on current led
-      pixels[i].setIsOn(true);
-      leds[i] = pixels[i].color;
-      FastLED.show();
-      delay(intervalTurnOnNextLed);
-    }
-
-    for (int i = 0; i < NUM_LEDS; i++) {
-      pixels[i].setIsOn(false);
-      leds[i] = pixels[i].color;
-    }
-    FastLED.show();
-    delay(intervalTurnOnNextLed);
-  }
-}
-
 //void loop() {
 //
 //  buttonLeftState = digitalRead(BUTTON_LEFT_PIN);
@@ -108,79 +76,75 @@ void loop() {
 //    
 //  }
 //
-//  Serial.print("isLeftBlinking: ");
-//  Serial.println(isLeftBlinking);
-//  Serial.println("************");
-//
 //  if (isLeftBlinking == true){
-//    unsigned long currentMillis = millis();
 //    
 //    for (int i = 0; i < NUM_LEDS; i++) {
-//      const bool timeReached = currentMillis > nextLedOnMillis;
-//      const bool isCorrectIndex = i == nextLedOnIndex;
-//
-//      Serial.print("index: ");
-//      Serial.println(i);
-//
-//      Serial.print("nextLedOnMillis: ");
-//      Serial.println(nextLedOnMillis);
-//
-//      Serial.print("currentMillis: ");
-//      Serial.println(currentMillis);
-//
-//      Serial.print("intervalTurnOnNextLed: ");
-//      Serial.println(intervalTurnOnNextLed);
-//
-//      Serial.print("currentMillis > nextLedOnMillis: ");
-//      Serial.println(currentMillis > nextLedOnMillis);
-//      
-//      
-//      Serial.print("timeReached: ");
-//      Serial.println(timeReached);
-//      Serial.print("isCorrectIndex: ");
-//      Serial.println(isCorrectIndex);
-//
-//      Serial.println("in turn on loop -----");
-//      
-//      if (timeReached && isCorrectIndex) {
-//        // turn on current led
-//        pixels[i].setIsOn(true);
-//        leds[i] = pixels[i].color;
-//
-//        // set turn on time and index for next led
-//        nextLedOnMillis = currentMillis + intervalTurnOnNextLed;
-//        nextLedOnIndex = i + 1;
-//      }
-//
-////      FastLED.show();
-//    }
-//    
-//    Serial.println("end turn on loop -----");
-//
-//    const bool timeToResetReached = currentMillis > nextLedOnMillis;
-//
-//    Serial.print("timeToResetReached: ");
-//    Serial.println(timeToResetReached);
-//    
-//    if (timeToResetReached && nextLedOnIndex >= NUM_LEDS) {
-//      // reset all leds
-//      for (int i = 0; i < NUM_LEDS; i++) {
-//        pixels[i].setIsOn(false);
-//        leds[i] = pixels[i].color;
-//      }
-//
-//      Serial.println("end turn off loop -----");
-//
-////      FastLED.show();
-//
-//      // next led on willbe the first in array
-//      nextLedOnMillis = millis() + intervalTurnOnNextLed;
-//      nextLedOnIndex = 0;
+//      // turn on current led
+//      pixels[i].setIsOn(true);
+//      leds[i] = pixels[i].color;
+//      FastLED.show();
+//      delay(intervalTurnOnNextLed);
 //    }
 //
-//    Serial.println("end isLeftBlinking -----");
-//  
-////    FastLED.show();
+//    for (int i = 0; i < NUM_LEDS; i++) {
+//      pixels[i].setIsOn(false);
+//      leds[i] = pixels[i].color;
+//    }
+//    FastLED.show();
+//    delay(intervalTurnOnNextLed);
 //  }
-//  FastLED.show();
 //}
+
+void loop() {
+
+  buttonLeftState = digitalRead(BUTTON_LEFT_PIN);
+
+  if (buttonLeftState == HIGH) {
+    if (isLeftBlinking == true){
+      isLeftBlinking = false;
+    } else {
+      isLeftBlinking = true;
+    }
+    
+  }
+
+  Serial.print("isLeftBlinking: ");
+  Serial.println(isLeftBlinking);
+  Serial.println("************");
+
+  if (isLeftBlinking == true){
+    unsigned long currentMillis = millis();
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+      const bool timeReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
+      const bool isCorrectIndex = i == nextLedOnIndex;
+      
+      if (timeReached && isCorrectIndex) {
+        // turn on current led
+        pixels[i].setIsOn(true);
+        leds[i] = pixels[i].color;
+
+        // set turn on time and index for next led
+        prevLedOnMillis = currentMillis;
+        nextLedOnIndex = i + 1;
+      }
+
+    }
+
+    const bool timeToResetReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
+
+    if (timeToResetReached && nextLedOnIndex >= NUM_LEDS) {
+      // reset all leds
+      for (int i = 0; i < NUM_LEDS; i++) {
+        pixels[i].setIsOn(false);
+        leds[i] = pixels[i].color;
+      }
+
+      // next led on willbe the first in array
+      prevLedOnMillis = currentMillis;
+      nextLedOnIndex = 0;
+    }
+  }
+  
+  FastLED.show();
+}
