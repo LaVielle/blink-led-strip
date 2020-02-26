@@ -1,11 +1,10 @@
+#include <Arduino.h>
 #include <FastLED.h>
 
 #include "Pixel.cpp"
 
 const int BUTTON_LEFT_PIN = 2;
 const int BUTTON_RIGHT_PIN = 3;
-int buttonLeftState = 0;
-int buttonRightState = 0;
 
 bool isLeftBlinking = false;
 bool isRightBlinking = false;
@@ -23,6 +22,22 @@ CRGB leftLeds[NUM_LEDS];
 
 Pixel rightPixels[NUM_LEDS];
 CRGB rightLeds[NUM_LEDS];
+
+// FUNCTIONS ************************************************************
+
+void toggleLeftSignal() {
+  Serial.println("toggleLeftSignal");
+  isLeftBlinking = !isLeftBlinking;
+  prevLedOnMillis = 0;
+  nextLedOnIndex = 0;
+}
+
+void toggleRightSignal() {
+  Serial.println("toggleRightSignal");
+  isRightBlinking = !isRightBlinking;
+  prevLedOnMillis = 0;
+  nextLedOnIndex = 0;
+}
 
 // SETUP ************************************************************
 
@@ -151,20 +166,4 @@ void loop() {
 //  }
   
   FastLED.show();
-}
-
-// FUNCTIONS ************************************************************
-
-void toggleLeftSignal() {
-  Serial.println("toggleLeftSignal");
-  isLeftBlinking = !isLeftBlinking;
-  prevLedOnMillis = 0;
-  nextLedOnIndex = 0;
-}
-
-void toggleRightSignal() {
-  Serial.println("toggleRightSignal");
-  isRightBlinking = !isRightBlinking;
-  prevLedOnMillis = 0;
-  nextLedOnIndex = 0;
 }
