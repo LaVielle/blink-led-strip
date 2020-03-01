@@ -1,169 +1,157 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-#include "Pixel.cpp"
+const int numLeds = 3;
 
-const int BUTTON_LEFT_PIN = 2;
-const int BUTTON_RIGHT_PIN = 3;
+const int leftButtonPin = 2;
+const int rightButtonPin = 3;
+
+const int leftLedPin = 9;
+const int rightLedPin = 10;
 
 bool isLeftBlinking = false;
 bool isRightBlinking = false;
 
-unsigned long prevLedOnMillis = 0;
-int nextLedOnIndex = 0;
+unsigned long leftPrevLedOnMillis = 0;
+int leftNextLedOnIndex = 0;
+unsigned long rightPrevLedOnMillis = 0;
+int rightNextLedOnIndex = 0;
+
+CRGB colorOn = CRGB(70, 255, 0); // orange
+CRGB colorOff = CRGB(0, 0, 0); // black
+
+CRGB leftLeds [numLeds];
+CRGB rightLeds [numLeds];
+
 const long intervalTurnOnNextLed = 250;
-
-const int NUM_LEDS = 3;
-const int LEFT_LED_PIN = 9;
-const int RIGHT_LED_PIN = 10;
-
-Pixel leftPixels[NUM_LEDS];
-CRGB leftLeds[NUM_LEDS];
-
-Pixel rightPixels[NUM_LEDS];
-CRGB rightLeds[NUM_LEDS];
 
 // FUNCTIONS ************************************************************
 
 void toggleLeftSignal() {
-  Serial.println("toggleLeftSignal");
   isLeftBlinking = !isLeftBlinking;
-  prevLedOnMillis = 0;
-  nextLedOnIndex = 0;
+  leftPrevLedOnMillis = 0;
+  leftNextLedOnIndex = 0;
 }
 
 void toggleRightSignal() {
-  Serial.println("toggleRightSignal");
   isRightBlinking = !isRightBlinking;
-  prevLedOnMillis = 0;
-  nextLedOnIndex = 0;
+  rightPrevLedOnMillis = 0;
+  rightNextLedOnIndex = 0;
+}
+
+void setAllLedsToColor(CRGB arr[], CRGB color) {
+  for (int i = 0; i < numLeds; i++) {
+    arr[i] = color;
+  }
+}
+
+struct blinkTroughtStripReturn {
+  unsigned long prevLedOnMillis;
+  int nextLedOnIndex;
+};
+
+blinkTroughtStripReturn blinkTroughtStrip (CRGB arr[], unsigned long prevLedOnMillis, int nextLedOnIndex) {
+
+  Serial.println("blinkTroughtStrip");
+
+  Serial.print("prevLedOnMillis: ");
+  Serial.println(prevLedOnMillis);
+
+  Serial.print("nextLedOnIndex: ");
+  Serial.println(nextLedOnIndex);
+
+  unsigned long currentMillis = millis();
+
+  for (int i = 0; i < numLeds; i++) {
+
+    Serial.println("blinkTroughtStrip loop 1");
+
+    const bool timeReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
+    const bool isCorrectIndex = i == nextLedOnIndex;
+
+    Serial.print("timeReached: ");
+    Serial.println(timeReached);
+
+    Serial.print("isCorrectIndex: ");
+    Serial.println(isCorrectIndex);
+
+    if (timeReached && isCorrectIndex) {
+      // turn on current led
+      arr[i] = colorOn;
+      Serial.println(arr[i]);
+
+      // set turn on time and index for next led
+      prevLedOnMillis = currentMillis;
+      nextLedOnIndex = i + 1;
+    }
+  }
+
+  const bool timeToResetReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
+
+  if (timeToResetReached && nextLedOnIndex >= numLeds) {
+    for (int i = 0; i < numLeds; i++) {
+      arr[i] = colorOff;
+    }
+
+    prevLedOnMillis = currentMillis;
+    nextLedOnIndex = 0;
+  }
+
+  blinkTroughtStripReturn newValues;
+  newValues.prevLedOnMillis = prevLedOnMillis;
+  newValues.nextLedOnIndex = nextLedOnIndex;
+
+  return newValues;
 }
 
 // SETUP ************************************************************
 
 void setup() {
+  // Serial.begin(115200);
   Serial.begin(9600);
 
-  // setup button pins
-  pinMode(BUTTON_LEFT_PIN, INPUT);
-  
+  pinMode(leftButtonPin, INPUT);
+
   attachInterrupt(
-    digitalPinToInterrupt(BUTTON_LEFT_PIN),
+    digitalPinToInterrupt(leftButtonPin),
     toggleLeftSignal,
     RISING
   );
-  
-  pinMode(BUTTON_RIGHT_PIN, INPUT);
 
-//  attachInterrupt(
-//    digitalPinToInterrupt(BUTTON_RIGHT_PIN),
-//    toggleRightSignal,
-//    RISING
-//  );
+  pinMode(rightButtonPin, INPUT);
 
-  // fill up array of leftPixels
-  for (int i = 0; i < NUM_LEDS; i++) {
-    Pixel p;
-    leftPixels[i] = p;
-    leftLeds[i] = p.color;
+  attachInterrupt(
+    digitalPinToInterrupt(rightButtonPin),
+    toggleRightSignal,
+    RISING
+  );
 
-    rightPixels[i] = p;
-    rightLeds[i] = p.color;
-  }
+  setAllLedsToColor(leftLeds, colorOff);
+  setAllLedsToColor(rightLeds, colorOff);
 
-  // setup LED strips pins
-  FastLED.addLeds<WS2812B, LEFT_LED_PIN>(leftLeds, NUM_LEDS);
-//  FastLED.addLeds<WS2812B, RIGHT_LED_PIN>(rightLeds, NUM_LEDS);
-
-  for (int i = 0; i < NUM_LEDS; i++) {
-    leftPixels[i].setIsOn(false);
-    rightPixels[i].setIsOn(false);
-  }
+  FastLED.addLeds<WS2812B, leftLedPin, RGB>(leftLeds, leftLedPin);
+  FastLED.addLeds<WS2812B, rightLedPin, RGB>(rightLeds, rightLedPin);
 
   FastLED.show();
+  
+  Serial.println("setup complete");
 }
 
 // LOOP ************************************************************
 
 void loop() {
 
-  if (isLeftBlinking) {
-    unsigned long currentMillis = millis();
-    
-    for (int i = 0; i < NUM_LEDS; i++) {
-      const bool timeReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
-      const bool isCorrectIndex = i == nextLedOnIndex;
-      
-      if (timeReached && isCorrectIndex) {
-        // turn on current led
-        leftPixels[i].setIsOn(true);
-        leftLeds[i] = leftPixels[i].color;
-
-        // set turn on time and index for next led
-        prevLedOnMillis = currentMillis;
-        nextLedOnIndex = i + 1;
-      }
-
-    }
-
-    const bool timeToResetReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
-
-    if (timeToResetReached && nextLedOnIndex >= NUM_LEDS) {
-      // reset all leds
-      for (int i = 0; i < NUM_LEDS; i++) {
-        leftPixels[i].setIsOn(false);
-        leftLeds[i] = leftPixels[i].color;
-      }
-
-      // next led on willbe the first in array
-      prevLedOnMillis = currentMillis;
-      nextLedOnIndex = 0;
-    }
-  } else {
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leftPixels[i].setIsOn(false);
-      leftLeds[i] = leftPixels[i].color;
-    }
+  if (isLeftBlinking){
+    blinkTroughtStripReturn newLedValues = blinkTroughtStrip(leftLeds, leftPrevLedOnMillis, leftNextLedOnIndex);
+    leftPrevLedOnMillis = newLedValues.prevLedOnMillis;
+    leftNextLedOnIndex = newLedValues.nextLedOnIndex;
   }
 
-//  if (isRightBlinking) {
-//    unsigned long currentMillis = millis();
-//    
-//    for (int i = 0; i < NUM_LEDS; i++) {
-//      const bool timeReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
-//      const bool isCorrectIndex = i == nextLedOnIndex;
-//      
-//      if (timeReached && isCorrectIndex) {
-//        // turn on current led
-//        rightPixels[i].setIsOn(true);
-//        rightLeds[i] = rightPixels[i].color;
-//
-//        // set turn on time and index for next led
-//        prevLedOnMillis = currentMillis;
-//        nextLedOnIndex = i + 1;
-//      }
-//
-//    }
-//
-//    const bool timeToResetReached = currentMillis - prevLedOnMillis >= intervalTurnOnNextLed;
-//
-//    if (timeToResetReached && nextLedOnIndex >= NUM_LEDS) {
-//      // reset all leds
-//      for (int i = 0; i < NUM_LEDS; i++) {
-//        rightPixels[i].setIsOn(false);
-//        rightLeds[i] = rightPixels[i].color;
-//      }
-//
-//      // next led on willbe the first in array
-//      prevLedOnMillis = currentMillis;
-//      nextLedOnIndex = 0;
-//    }
-//  } else {
-//    for (int i = 0; i < NUM_LEDS; i++) {
-//      rightPixels[i].setIsOn(false);
-//      rightLeds[i] = rightPixels[i].color;
-//    }
-//  }
-  
+  if (isRightBlinking){
+    blinkTroughtStripReturn newLedValues = blinkTroughtStrip(rightLeds, rightPrevLedOnMillis, rightNextLedOnIndex);
+    rightPrevLedOnMillis = newLedValues.prevLedOnMillis;
+    rightNextLedOnIndex = newLedValues.nextLedOnIndex;
+  }
+
   FastLED.show();
 }

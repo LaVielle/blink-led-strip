@@ -1,5 +1,6 @@
-#include <Arduino.h>
-#include <FastLED.h>
+#ifndef _PIXEL_H_
+#define _PIXEL_H_
+
 
 class Pixel {
   public:
@@ -23,3 +24,5 @@ class Pixel {
       return this->color;
     }
 };
+
+#endif // _PIXEL_H_
