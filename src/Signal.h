@@ -27,7 +27,7 @@ class Signal {
         // // }
 
         void toggleSignal();
-        
+
         void setupButtonInterrupt(void (*userFunc)(void));
 
         // void setPrevLedOnMillis(unsigned long timestamp) {

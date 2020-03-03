@@ -1,24 +1,20 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-bool isOn = false;
+#include "Signal.h"
 
-void switchOn() {
-  isOn = !isOn;
+Signal signal = Signal(3, 9, 3);
+
+void toggleSignal() {
+  signal.toggleSignal();
 }
 
-const int buttonPin = 3;
-
 void setup() {
-  attachInterrupt(
-    digitalPinToInterrupt(buttonPin),
-    switchOn,
-    RISING
-  );
+  signal.setupButtonInterrupt(toggleSignal);
 }
 
 void loop() {
-  
+
 }
 
 // #include "Signal.h"
