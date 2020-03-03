@@ -1,54 +1,42 @@
+#include <Arduino.h>
+#include <FastLED.h>
+
 #ifndef _SIGNAL_H_
 #define _SIGNAL_H_
 
-void tS(bool isBlinking) {
-    isBlinking = !isBlinking;
-}
+// void tS(bool isBlinking) {
+//     isBlinking = !isBlinking;
+// }
 
 class Signal {
     bool _isBlinking = false;
-    int _numLeds = 3;
+    int _buttonPin;
 
-    public: 
+    public:
 
-        unsigned long prevLedOnMillis = 0;
-        int nextLedOnIndex = 0;
+        Signal(int buttonPin, int ledPin, int numLeds);
 
-        Pixel pixels[3] = {};
-        CRGB leds[3] = {};
+        // unsigned long prevLedOnMillis = 0;
+        // int nextLedOnIndex = 0;
 
-        void toggleSignal() {
-            tS(_isBlinking);
-        }
+        // Pixel pixels[3] = {};
+        // CRGB leds[3] = {};
 
-        Signal(int buttonPin, int ledPin, int numLeds) {
-            pinMode(buttonPin, INPUT);
+        // // void toggleSignal() {
+        // //     tS(_isBlinking);
+        // // }
 
-            attachInterrupt(
-                digitalPinToInterrupt(buttonPin),
-                tS(_isBlinking),
-                RISING
-            );
+        void toggleSignal();
+        
+        void setupButtonInterrupt(void (*userFunc)(void));
 
-            _numLeds = numLeds;
+        // void setPrevLedOnMillis(unsigned long timestamp) {
+        //     prevLedOnMillis = timestamp;
+        // }
 
-            for (int i = 0; i < numLeds; i++) {
-                Pixel p;
-                pixels[i] = p;
-                leds[i] = p.color;
-            }
-
-            FastLED.addLeds<WS2812B, 2, RGB>(leds, numLeds);
-            
-        }
-
-        void setPrevLedOnMillis(unsigned long timestamp) {
-            prevLedOnMillis = timestamp;
-        }
-
-        void setNextLedOnIndex(int index) {
-            nextLedOnIndex = index;
-        }
+        // void setNextLedOnIndex(int index) {
+        //     nextLedOnIndex = index;
+        // }
 };
 
 #endif // _SIGNAL_H_
