@@ -7,14 +7,14 @@ const int numLeds = 3;
 const int leftButtonPin = 2;
 const int leftLedPin = 9;
 
-Signal signal = Signal(
+Signal leftSignal = Signal(
   leftButtonPin,
   leftLedPin,
   numLeds
 );
 
 void toggleSignal() {
-  signal.toggleSignal();
+  leftSignal.toggleSignal();
 }
 
 void addLeds(int ledPin, CRGB leds[]) {
@@ -24,7 +24,7 @@ void addLeds(int ledPin, CRGB leds[]) {
 void setup() {
   Serial.begin(115200);
 
-  signal.setupButtonInterrupt(toggleSignal);
+  leftSignal.setupButtonInterrupt(toggleSignal);
 }
 
 void loop() {
