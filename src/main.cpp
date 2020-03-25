@@ -3,13 +3,27 @@
 
 #include "Signal.h"
 
-Signal signal = Signal(3, 9, 3);
+const int numLeds = 3;
+const int leftButtonPin = 2;
+const int leftLedPin = 9;
+
+Signal signal = Signal(
+  leftButtonPin,
+  leftLedPin,
+  numLeds
+);
 
 void toggleSignal() {
   signal.toggleSignal();
 }
 
+void addLeds(int ledPin, CRGB leds[]) {
+  FastLED.addLeds<WS2812B, leftLedPin, RGB>(leds, numLeds);
+}
+
 void setup() {
+  Serial.begin(115200);
+
   signal.setupButtonInterrupt(toggleSignal);
 }
 

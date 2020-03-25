@@ -17,6 +17,7 @@ Signal::Signal(int buttonPin, int ledPin, int numLeds) {
 };
 
 void Signal::setupButtonInterrupt(void (*userFunc)(void)) {
+    Serial.println("Signal::setupButtonInterrupt");
     attachInterrupt(
         digitalPinToInterrupt(_buttonPin),
         userFunc,
@@ -26,4 +27,5 @@ void Signal::setupButtonInterrupt(void (*userFunc)(void)) {
 
 void Signal::toggleSignal(){
     _isBlinking = !_isBlinking;
+    Serial.println("Signal::toggleSignal");
 }

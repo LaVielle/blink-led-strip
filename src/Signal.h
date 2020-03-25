@@ -4,10 +4,6 @@
 #ifndef _SIGNAL_H_
 #define _SIGNAL_H_
 
-// void tS(bool isBlinking) {
-//     isBlinking = !isBlinking;
-// }
-
 class Signal {
     bool _isBlinking = false;
     int _buttonPin;

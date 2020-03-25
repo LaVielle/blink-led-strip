@@ -1,28 +1,18 @@
+#include <Arduino.h>
+#include <FastLED.h>
+
 #ifndef _PIXEL_H_
 #define _PIXEL_H_
 
 
 class Pixel {
-  public:
-    bool isOn = false;
-      
-    CRGB colorOn = CRGB(70, 255, 0); // orange
-    CRGB colorOff = CRGB(0, 0, 0); // black
-    CRGB color = this->colorOff;
+  bool _isOn = false;
+  CRGB _color = CRGB(0, 0, 0); // black
 
-    void setIsOn(bool isOn) {
-      if (isOn) {
-        this->isOn = true;
-        this->color = this->colorOn;
-      } else {
-        this->isOn = false;
-        this->color = this->colorOff;
-      }
-    }
-    
-    CRGB show() {
-      return this->color;
-    }
+  public:
+    void setIsOn(bool isOn);
+
+    CRGB getColor();
 };
 
 #endif // _PIXEL_H_
