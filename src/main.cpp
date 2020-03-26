@@ -1,15 +1,21 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
+#include "Timer.h"
 #include "Signal.h"
 
 const int numLeds = 3;
+
+Timer timer = Timer(numLeds);
 
 const int leftButtonPin = 2;
 const int leftLedPin = 9;
 
 const int rightButtonPin = 3;
 const int rightLedPin = 10;
+
+unsigned long prevLedOnMillis = 0;
+int nextLedOnIndex = 0;
 
 Signal leftSignal = Signal(
   leftButtonPin,
@@ -42,8 +48,20 @@ void setup() {
 }
 
 void loop() {
-  leftSignal.blink();
-  rightSignal.blink();
+
+  const bool anySignalBlinking = leftSignal.getIsBlinking() || rightSignal.getIsBlinking();
+
+  timerState t;
+
+  if (anySignalBlinking) {
+    t = timer.update();
+  } else {
+    t = timer.reset();
+  }
+
+  leftSignal.blink(t);
+    rightSignal.blink(t);
+  
 }
 
 // #include "Signal.h"

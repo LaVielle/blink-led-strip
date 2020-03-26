@@ -11,6 +11,10 @@ Signal::Signal(int buttonPin, int ledPin, int numLeds) {
     }    
 };
 
+bool Signal::getIsBlinking() {
+    return _isBlinking;
+}
+
 void Signal::setupButtonInterrupt(void (*userFunc)(void)) {
     Serial.println("Signal::setupButtonInterrupt");
     attachInterrupt(
@@ -25,46 +29,11 @@ void Signal::toggleSignal(){
     Serial.println("Signal::toggleSignal");
 }
 
-void Signal::blink(){
-
-    if (_isBlinking) {
-        unsigned long currentMillis = millis();
-            
-        for (int i = 0; i < _numLeds; i++) {
-
-            const bool timeReached = currentMillis - _prevLedOnMillis >= _intervalTurnOnNextLed;
-            const bool isCorrectIndex = i == _nextLedOnIndex;
-
-            if (timeReached && isCorrectIndex) {
-                // turn on current led
-                pixels[i].setIsOn(true);
-                leds[i] = pixels[i].getColor();
-
-                // set turn on time and index for next led
-                _prevLedOnMillis = currentMillis;
-                _nextLedOnIndex = i + 1;
-            }
-        }
-
-        const bool timeToResetReached = currentMillis - _prevLedOnMillis >= _intervalTurnOnNextLed;
-        
-        if (timeToResetReached && _nextLedOnIndex >= _numLeds) {
-            for (int i = 0; i < _numLeds; i++) {
-                pixels[i].setIsOn(false);
-                leds[i] = pixels[i].getColor();
-            }
-
-            _prevLedOnMillis = currentMillis;
-            _nextLedOnIndex = 0;
-        }
-    } else {
-        _nextLedOnIndex = 0;
-        
-        for (int i = 0; i < _numLeds; i++) {
-            pixels[i].setIsOn(false);
-            leds[i] = pixels[i].getColor();
-        }
+void Signal::blink(timerState timerState){
+    for (int i = 0; i < _numLeds; i++) {
+        const bool shouldBeOn = _isBlinking && timerState.nextLedOnIndex >= i;
+        pixels[i].setIsOn(shouldBeOn);
+        leds[i] = pixels[i].getColor();
     }
-
     FastLED.show();
 }
