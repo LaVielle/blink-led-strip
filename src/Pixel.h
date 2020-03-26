@@ -4,20 +4,24 @@
 #ifndef _PIXEL_H_
 #define _PIXEL_H_
 
+struct ColorOnOff {
+  CRGB on;
+  CRGB off;
+};
+
 
 class Pixel {
   bool _isOn = false;
-  CRGB _color = CRGB(0, 0, 0); // black
+  ColorOnOff _colors;
 
   public:
+    void setColors(ColorOnOff colors);
+    
     void setIsOn(bool isOn);
 
     bool getIsOn();
 
     CRGB getColor();
-
-    CRGB colorOn = CRGB(70, 255, 0);
-    CRGB colorOff = CRGB(0, 0, 0);
 };
 
 #endif // _PIXEL_H_

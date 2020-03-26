@@ -1,8 +1,11 @@
 # include "Pixel.h"
 
+void Pixel::setColors(ColorOnOff colors) {
+    _colors = colors;
+};
+
 void Pixel::setIsOn(bool isOn) {
     _isOn = isOn;
-    _color = isOn ? colorOn : colorOff;
 };
 
 bool Pixel::getIsOn() {
@@ -10,5 +13,8 @@ bool Pixel::getIsOn() {
 };
 
 CRGB Pixel::getColor() {
-    return _color;
+    if (_isOn) {
+        return _colors.on;
+    }
+    return _colors.off;
 };

@@ -15,10 +15,13 @@ class Signal {
 
     public:
 
-        Signal(int buttonPin, int ledPin, int numLeds);
+        Signal(int buttonPin, int numLeds);
 
-        Pixel pixels[3];
-        CRGB leds[3];
+        Pixel frontPixels[3];
+        CRGB frontLeds[3];
+
+        Pixel backPixels[3];
+        CRGB backLeds[3];
 
         bool getIsBlinking();
 

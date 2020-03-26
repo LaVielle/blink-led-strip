@@ -1,13 +1,26 @@
 #include "Signal.h"
 
-Signal::Signal(int buttonPin, int ledPin, int numLeds) {
+Signal::Signal(int buttonPin, int numLeds) {
     pinMode(buttonPin, INPUT);
     _buttonPin = buttonPin;
 
     for (int i = 0; i < numLeds; i++) {
-        Pixel p;
-        pixels[i] = p;
-        leds[i] = p.getColor();
+
+        Pixel pFront;
+        pFront.setColors({
+            on: CRGB(255, 70, 0),
+            off: CRGB(255, 255, 255)
+        });
+        frontPixels[i] = pFront;
+        frontLeds[i] = pFront.getColor();
+
+        Pixel pBack;
+        pBack.setColors({
+            on: CRGB(255, 70, 0),
+            off: CRGB(255, 0, 0)
+        });
+        backPixels[i] = pBack;
+        backLeds[i] = pBack.getColor();
     }    
 };
 
@@ -32,8 +45,11 @@ void Signal::toggleSignal(){
 void Signal::blink(timerState timerState){
     for (int i = 0; i < _numLeds; i++) {
         const bool shouldBeOn = _isBlinking && timerState.nextLedOnIndex >= i;
-        pixels[i].setIsOn(shouldBeOn);
-        leds[i] = pixels[i].getColor();
+        frontPixels[i].setIsOn(shouldBeOn);
+        frontLeds[i] = frontPixels[i].getColor();
+
+        backPixels[i].setIsOn(shouldBeOn);
+        backLeds[i] = backPixels[i].getColor();
     }
     FastLED.show();
 }
