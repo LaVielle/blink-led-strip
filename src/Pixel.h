@@ -12,7 +12,12 @@ class Pixel {
   public:
     void setIsOn(bool isOn);
 
+    bool getIsOn();
+
     CRGB getColor();
+
+    CRGB colorOn = CRGB(70, 255, 0);
+    CRGB colorOff = CRGB(0, 0, 0);
 };
 
 #endif // _PIXEL_H_

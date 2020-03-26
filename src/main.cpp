@@ -17,18 +17,16 @@ void toggleSignal() {
   leftSignal.toggleSignal();
 }
 
-void addLeds(int ledPin, CRGB leds[]) {
-  FastLED.addLeds<WS2812B, leftLedPin, RGB>(leds, numLeds);
-}
-
 void setup() {
   Serial.begin(115200);
 
   leftSignal.setupButtonInterrupt(toggleSignal);
+
+  FastLED.addLeds<WS2812B, leftLedPin, RGB>(leftSignal.leds, numLeds);
 }
 
 void loop() {
-
+  leftSignal.blink();
 }
 
 // #include "Signal.h"
