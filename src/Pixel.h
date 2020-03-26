@@ -4,22 +4,23 @@
 #ifndef _PIXEL_H_
 #define _PIXEL_H_
 
-struct ColorOnOff {
-  CRGB on;
-  CRGB off;
+struct ColorMode {
+  CRGB full;
+  CRGB blink;
+  CRGB dark;
 };
 
 
 class Pixel {
-  bool _isOn = false;
-  ColorOnOff _colors;
+  String _colorMode = "dark";
+  ColorMode _colors;
 
   public:
-    void setColors(ColorOnOff colors);
+    void setColors(ColorMode colors);
     
-    void setIsOn(bool isOn);
+    void setMode(String mode);
 
-    bool getIsOn();
+    String getMode();
 
     CRGB getColor();
 };

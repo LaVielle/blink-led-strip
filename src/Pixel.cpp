@@ -1,20 +1,25 @@
 # include "Pixel.h"
 
-void Pixel::setColors(ColorOnOff colors) {
+void Pixel::setColors(ColorMode colors) {
     _colors = colors;
 };
 
-void Pixel::setIsOn(bool isOn) {
-    _isOn = isOn;
+void Pixel::setMode(String mode) {
+    _colorMode = mode;
 };
 
-bool Pixel::getIsOn() {
-    return _isOn;
+String Pixel::getMode() {
+    return _colorMode;
 };
 
 CRGB Pixel::getColor() {
-    if (_isOn) {
-        return _colors.on;
-    }
-    return _colors.off;
+    if (_colorMode == "full") {
+        return _colors.full;
+    };
+    if (_colorMode == "blink") {
+        return _colors.blink;
+    };
+    if (_colorMode == "dark") {
+        return _colors.dark;
+    };
 };
