@@ -58,6 +58,8 @@ void Signal::blink(){
             _nextLedOnIndex = 0;
         }
     } else {
+        _nextLedOnIndex = 0;
+        
         for (int i = 0; i < _numLeds; i++) {
             pixels[i].setIsOn(false);
             leds[i] = pixels[i].getColor();

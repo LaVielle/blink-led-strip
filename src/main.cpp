@@ -4,8 +4,12 @@
 #include "Signal.h"
 
 const int numLeds = 3;
+
 const int leftButtonPin = 2;
 const int leftLedPin = 9;
+
+const int rightButtonPin = 3;
+const int rightLedPin = 10;
 
 Signal leftSignal = Signal(
   leftButtonPin,
@@ -13,20 +17,33 @@ Signal leftSignal = Signal(
   numLeds
 );
 
-void toggleSignal() {
+Signal rightSignal = Signal(
+  rightButtonPin,
+  rightLedPin,
+  numLeds
+);
+
+void toggleLeftSignal() {
   leftSignal.toggleSignal();
+}
+
+void toggleRightSignal() {
+  rightSignal.toggleSignal();
 }
 
 void setup() {
   Serial.begin(115200);
 
-  leftSignal.setupButtonInterrupt(toggleSignal);
+  leftSignal.setupButtonInterrupt(toggleLeftSignal);
+  rightSignal.setupButtonInterrupt(toggleRightSignal);
 
   FastLED.addLeds<WS2812B, leftLedPin, RGB>(leftSignal.leds, numLeds);
+  FastLED.addLeds<WS2812B, rightLedPin, RGB>(rightSignal.leds, numLeds);
 }
 
 void loop() {
   leftSignal.blink();
+  rightSignal.blink();
 }
 
 // #include "Signal.h"
