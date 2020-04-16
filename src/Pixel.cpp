@@ -22,4 +22,5 @@ CRGB Pixel::getColor() {
     if (_colorMode == "dark") {
         return _colors.dark;
     };
+    return _colors.full;
 };

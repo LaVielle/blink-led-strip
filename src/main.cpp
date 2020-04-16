@@ -10,11 +10,11 @@ Timer timer = Timer(numLeds);
 
 const int leftButtonPin = 2;
 const int leftFrontLedPin = 9;
-const int leftBackLedPin = 10;
+const int leftBackLedPin = 12;
 
 const int rightButtonPin = 3;
-const int rightFrontLedPin = 11;
-const int rightBackLedPin = 12;
+const int rightFrontLedPin = 10;
+const int rightBackLedPin = 11;
 
 unsigned long prevLedOnMillis = 0;
 int nextLedOnIndex = 0;
@@ -64,9 +64,13 @@ void setup() {
 
   FastLED.addLeds<WS2812B, rightFrontLedPin, GRB>(rightSignal.frontLeds, numLeds);
   FastLED.addLeds<WS2812B, rightBackLedPin, GRB>(rightSignal.backLeds, numLeds);
+
+  Serial.println("end setup");
 }
 
 void loop() {
+
+  Serial.println("loop");
 
   const bool anySignalBlinking = leftSignal.getIsBlinking() || rightSignal.getIsBlinking();
 

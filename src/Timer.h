@@ -13,7 +13,7 @@ class Timer {
 
   unsigned long _prevLedOnMillis = 0;
   int _nextLedOnIndex = 0;
-  unsigned long _intervalTurnOnNextLed = 250;
+  unsigned long _intervalTurnOnNextLed = 100;
 
   public:
     Timer(int numLeds);
