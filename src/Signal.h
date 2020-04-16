@@ -11,17 +11,17 @@
 class Signal {
     bool _isBlinking = false;
     int _buttonPin;
-    int _numLeds = 3;
+    int _numLeds = 10;
 
     public:
 
         Signal(int buttonPin, int numLeds);
 
-        Pixel frontPixels[3];
-        CRGB frontLeds[3];
+        Pixel frontPixels[10];
+        CRGB frontLeds[10];
 
-        Pixel backPixels[3];
-        CRGB backLeds[3];
+        Pixel backPixels[10];
+        CRGB backLeds[10];
 
         bool getIsBlinking();
 

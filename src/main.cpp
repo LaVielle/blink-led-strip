@@ -4,7 +4,7 @@
 #include "Timer.h"
 #include "Signal.h"
 
-const int numLeds = 3;
+const int numLeds = 10;
 
 Timer timer = Timer(numLeds);
 
