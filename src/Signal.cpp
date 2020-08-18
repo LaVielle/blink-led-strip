@@ -48,6 +48,10 @@ void Signal::blink(timerState timerState){
     if (_isBlinking) {
         for (int i = 0; i < _numLeds; i++) {
             const bool shouldBeOn = _isBlinking && timerState.nextLedOnIndex >= i;
+
+            // TODO: if last led is on we should fade the entire strip to black
+            // const bool lastLedIsOn = i == _numLeds -1;
+
             frontPixels[i].setMode(shouldBeOn ? "blink" : "dark");
             frontLeds[i] = frontPixels[i].getColor();
 
