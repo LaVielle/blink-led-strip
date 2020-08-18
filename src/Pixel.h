@@ -12,7 +12,7 @@ struct ColorMode {
 
 
 class Pixel {
-  String _colorMode = "dark";
+  String _colorMode = "full";
   ColorMode _colors;
 
   public:

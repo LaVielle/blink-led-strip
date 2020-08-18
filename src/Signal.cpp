@@ -8,18 +8,18 @@ Signal::Signal(int buttonPin, int numLeds) {
 
         Pixel pFront;
         pFront.setColors({
-            full: CRGB(255, 255, 255),
-            blink: CRGB(255, 70, 0),
-            dark: CRGB(0, 0, 0)
+            full: CRGB::White,
+            blink: CRGB::OrangeRed,
+            dark: CRGB::Black
         });
         frontPixels[i] = pFront;
         frontLeds[i] = pFront.getColor();
 
         Pixel pBack;
         pBack.setColors({
-            full: CRGB(255, 0, 0),
-            blink: CRGB(255, 70, 0),
-            dark: CRGB(0, 0, 0)
+            full: CRGB::Red,
+            blink: CRGB::OrangeRed,
+            dark: CRGB::Black
         });
         backPixels[i] = pBack;
         backLeds[i] = pBack.getColor();
