@@ -33,6 +33,8 @@ void toggleLeftSignal() {
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
 
+  Serial.println("left");
+
   // If interrupts come faster than 200ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 200) {
     leftSignal.toggleSignal();
@@ -44,6 +46,8 @@ void toggleLeftSignal() {
 void toggleRightSignal() {
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
+
+  Serial.println("right");
 
   // If interrupts come faster than 200ms, assume it's a bounce and ignore
   if (interrupt_time - last_interrupt_time > 200) {
