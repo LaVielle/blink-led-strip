@@ -27,8 +27,6 @@ class Signal {
 
         void toggleSignal();
 
-        void setupButtonInterrupt(void (*userFunc)(void));
-
         void blink(timerState timerState);
 };
 

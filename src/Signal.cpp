@@ -30,15 +30,6 @@ bool Signal::getIsBlinking() {
     return _isBlinking;
 }
 
-void Signal::setupButtonInterrupt(void (*userFunc)(void)) {
-    Serial.println("Signal::setupButtonInterrupt");
-    attachInterrupt(
-        digitalPinToInterrupt(_buttonPin),
-        userFunc,
-        RISING
-    );
-}
-
 void Signal::toggleSignal(){
     _isBlinking = !_isBlinking;
     Serial.println("Signal::toggleSignal");
